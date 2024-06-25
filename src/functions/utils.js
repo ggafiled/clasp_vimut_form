@@ -14,6 +14,23 @@ const isEmpty = (text) => {
     return text === '' ? true : false;
 };
 
+const InsertValue = async(string) => {
+    Logger.log('[InsertValue()]: starting function.');
+    const Progress = Tamotsu.Table.define({
+        sheetName: 'Database',
+        rowShift: 0,
+        columnShift: 0,
+    });
+
+    Progress.create({
+        "":"",
+        
+    });
+
+    var likeCondoname = await Progress.all();
+    return likeCondoname;
+};
+
 const filterByValueLike = async(string) => {
     Logger.log('[filterByValueLike()]: starting function.');
     const Progress = Tamotsu.Table.define({
@@ -75,7 +92,7 @@ const render = (file, argsObject) => {
     }
     return tmp
         .evaluate()
-        .setTitle('- 🕵️‍♀️ Project List -')
+        .setTitle('แบบบันทึกเวลาบริการและอุณหภูมิการส่งอาหารผู้ป่วยประจำวัน')
         .setFaviconUrl(
             'https://www.vimut.com/favicon.ico'
         );
