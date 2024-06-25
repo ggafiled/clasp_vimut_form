@@ -24,6 +24,10 @@
     <title>แบบบันทึกเวลาบริการและอุณหภูมิการส่งอาหารผู้ป่วยประจำวัน</title>
 </head>
 <style>
+    *.hidden {
+        display: none !important;
+    }
+
     body {
         margin-bottom: 25px;
         font-family: 'Sarabun', sans-serif;
@@ -37,14 +41,31 @@
     tr.shown td.details-control {
         background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
     }
+
+    div.loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(16, 16, 16, 0.5);
+    }
+
+    .spinner-border {
+        margin: auto;
+        position: relative;
+        display: block;
+        width: 50px;
+        height: 50px;
+    }
 </style>
 
 <body>
     <div class="container">
         <nav class="navbar navbar-light bg-white mb-3">
             <a class="navbar-brand" href="#">
-                <img src="https://www.vimut.com/assets/images/img/logo-desktop.png"
-                    width="45" height="45" class="d-inline-block align-top mr-1" alt="" loading="lazy">
+                <img src="https://www.vimut.com/assets/images/img/logo-desktop.png" width="45" height="45"
+                    class="d-inline-block align-top mr-1" alt="" loading="lazy">
                 แบบบันทึกเวลาบริการและอุณหภูมิการส่งอาหารผู้ป่วยประจำวัน
             </a>
         </nav>
@@ -58,11 +79,31 @@
             </div>
         </div>
     </div>
+    <div class="loading hidden d-flex justify-content-center align-items-center" z-index="99999">
+            <div class="spinner-border m-5 justify-content-center align-items-center" role="status" >
+                <span class="sr-only">Loading...</span>
+            </div>
+            <span>Loading...</span>
+    </div>
 </body>
 
 </html>
 
 <script>
+    function showLoading() {
+        var loadingOverlay = document.querySelector('.loading');
+        if (loadingOverlay.classList.contains('hidden')) {
+            loadingOverlay.classList.remove('hidden');
+        }
+    }
+
+    function hideLoading() {
+        var loadingOverlay = document.querySelector('.loading');
+        if (!loadingOverlay.classList.contains('hidden')) {
+            loadingOverlay.classList.add('hidden');
+        }
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
         var dataSet = [];
         var table = null;
@@ -149,7 +190,11 @@
                     }
                 }]
             });
+
+            hideLoading();
         }
+
+        showLoading();
 
         google.script.run.withSuccessHandler(onSuccess)
             .filterByValue();
