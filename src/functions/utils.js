@@ -24,7 +24,7 @@ const InsertValue = async(string) => {
 
     Progress.create({
         "":"",
-        
+
     });
 
     var likeCondoname = await Progress.all();
@@ -94,7 +94,7 @@ const render = (file, argsObject) => {
         .evaluate()
         .setTitle('แบบบันทึกเวลาบริการและอุณหภูมิการส่งอาหารผู้ป่วยประจำวัน')
         .setFaviconUrl(
-            'https://www.vimut.com/favicon.ico'
+            'https://foodhouse.co.th/wp-content/uploads/2018/12/cropped-image09-180x180.png'
         );
 };
 

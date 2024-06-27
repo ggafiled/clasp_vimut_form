@@ -5,22 +5,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@100&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
-        </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
-        </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
-        </script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js">
+    </script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js"></script>
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.22/css/jquery.dataTables.min.css">
     <script src="//cdn.datatables.net/1.10.22/js/jquery.dataTables.min.js"></script>
     <script src="https://static.line-scdn.net/liff/edge/2.1/liff.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/moment@2.30.1/moment.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.all.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.0/dist/sweetalert2.min.css" rel="stylesheet">
     <title>แบบบันทึกเวลาบริการและอุณหภูมิการส่งอาหารผู้ป่วยประจำวัน</title>
 </head>
 <style>
@@ -61,35 +64,144 @@
 </style>
 
 <body>
-    <div class="container">
-        <nav class="navbar navbar-light bg-white mb-3">
-            <a class="navbar-brand" href="#">
-                <img src="https://www.vimut.com/assets/images/img/logo-desktop.png" width="45" height="45"
-                    class="d-inline-block align-top mr-1" alt="" loading="lazy">
-                แบบบันทึกเวลาบริการและอุณหภูมิการส่งอาหารผู้ป่วยประจำวัน
-            </a>
-        </nav>
-        <div class="container">
+    <nav class="navbar navbar-light bg-white mb-3" style="background-color: #A90056 !important;">
+        <a class="navbar-brand" href="#">
+            <img src="https://foodhouse.co.th/wp-content/uploads/2019/01/foodhouse-18.jpg" width="300" height="81"
+                class="d-inline-block align-top mr-1" alt="" loading="lazy"> </a>
+    </nav>
+    <div class="container-fluid">
+
+        <div class="container-fluid">
             <div class="row pb-5">
-                <button type="button" class="btn btn-info btn-lg btn-block">เริ่มบันทึกข้อมูล</button>
+                <button type="button" class="btn btn-lg btn-block"
+                    style="background-color: #A90056 !important; min-height: 150px;color: #ffffff;"
+                    onclick="openModal()">เริ่มบันทึกข้อมูล</button>
             </div>
-            <div class="row">
+            <div class="row" style="overflow: scroll !important;">
                 <table id="tabel1">
                 </table>
             </div>
         </div>
     </div>
     <div class="loading hidden d-flex justify-content-center align-items-center" z-index="99999">
-            <div class="spinner-border m-5 justify-content-center align-items-center" role="status" >
-                <span class="sr-only">Loading...</span>
+        <div class="spinner-border m-5 justify-content-center align-items-center" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+        <span>Loading...</span>
+    </div>
+    <div id="recordModal" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">กรอกข้อมูล</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="frmRecord">
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" id="transactionDTM" />
+                        </div>
+                        <div class="form">
+                            <label class="require">เวลาที่เริ่มจัดส่ง / เวลาที่ถึง ward</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="bi bi-clock"></i></div>
+                                </div>
+                                <input type="text" class="form-control datetimepicker" id="startDTM" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="require">มื้ออาหาร</label>
+                            <select class="custom-select" id="meats" required>
+                                <option selected>-- เลือก --</option>
+                                <option value="เช้า">เช้า 07.40 - 08.00 น.</option>
+                                <option value="กลางวัน">กลางวัน 11.40 - 12.00 น.</option>
+                                <option value="เย็น">เย็น 16.40 - 17.00 น.</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="require">Location</label>
+                            <select class="custom-select" id="locations" required>
+                                <option selected>-- เลือก --</option>
+                                <option value="Foodhouse">Foodhouse</option>
+                                <option value="W11">W11</option>
+                                <option value="W12">W12</option>
+                                <option value="W12A">W12A</option>
+                                <option value="W17">W17</option>
+                            </select>
+                        </div>
+                        <div class="form">
+                            <label class="require">อุณหภูมิของอาหารที่ Foodhouse</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">°C</div>
+                                </div>
+                                <input type="number" class="form-control" id="tmfh"
+                                    placeholder="อุณหภูมิของอาหารที่ Foodhouse" value="25" required>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="form">
+                            <label class="require">เวลาที่เสิร์ฟอาหารถาดสุดท้าย</label>
+                            <div class="row">
+                                <div class="col-10">
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text"><i class="bi bi-clock"></i></div>
+                                        </div>
+                                        <input type="text" class="form-control datetimepicker" id="finishDTM" required
+                                            readonly disabled>
+                                    </div>
+                                </div>
+                                <div class="col-2">
+                                    <button type="button" class="btn btn-info mb-2" onclick="calFinishDTM()"><i
+                                            class="bi bi-calculator"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form">
+                            <label class="require">อุณหภูมิของอาหารที่ Ward</label>
+                            <div class="input-group mb-2">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">°C</div>
+                                </div>
+                                <input type="number" class="form-control" id="tmwd"
+                                    placeholder="อุณหภูมิของอาหารที่ Ward" value="25" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                    <button type="button" class="btn btn-primary" id="btnOnSave">บันทึกข้อมูล</button>
+                </div>
             </div>
-            <span>Loading...</span>
+        </div>
     </div>
 </body>
 
 </html>
 
 <script>
+
+    const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-end',
+        background: '#D9E8DC',
+        customClass: {
+            popup: 'colored-toast',
+        },
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+    });
+
+    function openModal() {
+        $('#recordModal').modal('show');
+    }
+
     function showLoading() {
         var loadingOverlay = document.querySelector('.loading');
         if (loadingOverlay.classList.contains('hidden')) {
@@ -104,13 +216,74 @@
         }
     }
 
+    function initStartDTM() {
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var year = now.getFullYear();
+        var hours = ("0" + now.getHours()).slice(-2);
+        var minutes = ("0" + now.getMinutes()).slice(-2);
+
+        // Format the current date and time as 'd.m.Y H:i'
+        var currentDateTime = day + "/" + month + "/" + year + " " + hours + ":" + minutes;
+        console.log(currentDateTime);
+        $('#startDTM').datetimepicker({
+            format: 'd/m/Y H:i',
+            lang: 'ru',
+            step: 5,
+            value: currentDateTime
+        });
+    }
+
+    function calFinishDTM() {
+        var now = new Date();
+        var day = ("0" + now.getDate()).slice(-2);
+        var month = ("0" + (now.getMonth() + 1)).slice(-2);
+        var year = now.getFullYear();
+        var hours = ("0" + now.getHours()).slice(-2);
+        var minutes = ("0" + now.getMinutes()).slice(-2);
+
+        // Format the current date and time as 'd.m.Y H:i'
+        var currentDateTime = day + "/" + month + "/" + year + " " + hours + ":" + minutes;
+        console.log(currentDateTime);
+        $('#finishDTM').datetimepicker({
+            format: 'd/m/Y H:i',
+            lang: 'ru',
+            step: 5,
+            value: currentDateTime
+        });
+        Toast.fire({
+            icon: 'success',
+            title: 'ดึงเวลาที่เสิร์ฟอาหารถาดสุดท้าย เรียบร้อยแล้ว',
+        });
+    }
+
+    $(document).ready(function () {
+        initStartDTM();
+
+        $('#btnOnSave').click(function (e) {
+            e.preventDefault();
+            const data = new FormData($("#frmRecord"));
+            console.log(data);
+        });
+    });
+
     document.addEventListener("DOMContentLoaded", function () {
         var dataSet = [];
         var table = null;
 
-        liff.init({
-            liffId: "1655032626-V4QkoRMZ"
-        }, () => { }, err => console.error(err.code, error.message));
+        // liff.init({
+        //     liffId: "1655032626-V4QkoRMZ"
+        // }).then(async () => {
+        //     if (liff.isLoggedIn()) {
+        //         console.log(liff.getProfile());
+        //     } else {
+        //         liff.login();
+        //     }
+        // })
+        //     .catch((err) => {
+        //         console.log(err);
+        //     });
 
         function onSuccess(DataPass) {
             console.log(JSON.parse(DataPass));
