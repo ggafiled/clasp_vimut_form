@@ -14,29 +14,24 @@ const isEmpty = (text) => {
     return text === '' ? true : false;
 };
 
-const InsertValue = async() => {
-    Logger.log('[InsertValue()]: starting function.');
+const InsertValue = async(model) => {
+    Logger.log('[InsertValue()]: starting function.' + JSON.stringify(model));
+    model = JSON.parse(JSON.stringify(model));
+
+    var diffTemp = parseInt(model.tmwd) - parseInt(model.tmfh);
+
     const Progress = Tamotsu.Table.define({
         sheetName: 'Database',
         rowShift: 0,
         columnShift: 0,
     });
 
-    Progress.create({
-        "Transaction DTM": "1",
-        "Meat": "1",
-        "Location": "1",
-        "Delivery/Arrival DTM": "1",
-        "Finished DTM": "1",
-        "DTM Diff": "'",
-        "Food's Temperature At Foodhouse": "1",
-        "Food's Temperature At Ward": "1",
-        "Temperature Diff": "1"
-
-    });
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Database');
+    var tmp_data = [model.finishDTM, model.meats, model.locations, model.startDTM, model.finishDTM, "10:00", model.tmfh, model.tmwd, diffTemp]
+    sheet.appendRow(tmp_data);
 
     var likeCondoname = await Progress.all();
-    return likeCondoname;
+    return JSON.stringify(likeCondoname);
 };
 
 const filterByValueLike = async(string) => {
@@ -103,7 +98,12 @@ const render = (file, argsObject) => {
         .setTitle('แบบบันทึกเวลาบริการและอุณหภูมิการส่งอาหารผู้ป่วยประจำวัน')
         .setFaviconUrl(
             'https://foodhouse.co.th/wp-content/uploads/2018/12/cropped-image09-180x180.png'
-        );
+        )
+        .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
 };
 
-export { setDataToStore, getDataFromRange, isEmpty, filterByValue, filterByValueLike, render, InsertValue };
+const getScriptURL = () => {
+    return ScriptApp.getService().getUrl();
+}
+
+export { setDataToStore, getDataFromRange, isEmpty, filterByValue, filterByValueLike, render, InsertValue, getScriptURL };

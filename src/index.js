@@ -1,5 +1,5 @@
 import { doPost, doGet } from './server/webapp';
-import { filterByValue, InsertValue } from './functions/utils';
+import { filterByValue, InsertValue, getScriptURL } from './functions/utils';
 
 // eslint-disable-next-line no-global-assign
 Logger = BetterLog.useSpreadsheet(
@@ -11,3 +11,4 @@ global.doPost = doPost;
 global.doGet = doGet;
 global.filterByValue = filterByValue;
 global.InsertValue = InsertValue;
+global.getScriptURL = getScriptURL;
