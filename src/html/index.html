@@ -90,32 +90,30 @@
         <span>Loading...</span>
     </div>
     <div id="recordModal" class="modal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">กรอกข้อมูล</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form id="frmRecord">
-                        <div class="form-group">
-                            <input type="hidden" class="form-control" id="transactionDTM" />
-                        </div>
+        <form id="frmRecord">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">กรอกข้อมูล</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
                         <div class="form">
                             <label class="require">เวลาที่เริ่มจัดส่ง / เวลาที่ถึง ward</label>
                             <div class="input-group mb-2">
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="bi bi-clock"></i></div>
                                 </div>
-                                <input type="text" class="form-control datetimepicker" id="startDTM" required>
+                                <input type="text" class="form-control datetimepicker" id="startDTM" name="startDTM"
+                                    required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="require">มื้ออาหาร</label>
-                            <select class="custom-select" id="meats" required>
-                                <option selected>-- เลือก --</option>
+                            <select class="custom-select" id="meats" name="meats" required>
+                                <option value="" selected>-- เลือก --</option>
                                 <option value="เช้า">เช้า 07.40 - 08.00 น.</option>
                                 <option value="กลางวัน">กลางวัน 11.40 - 12.00 น.</option>
                                 <option value="เย็น">เย็น 16.40 - 17.00 น.</option>
@@ -123,8 +121,8 @@
                         </div>
                         <div class="form-group">
                             <label class="require">Location</label>
-                            <select class="custom-select" id="locations" required>
-                                <option selected>-- เลือก --</option>
+                            <select class="custom-select" id="locations" name="locations" required>
+                                <option value="" selected>-- เลือก --</option>
                                 <option value="Foodhouse">Foodhouse</option>
                                 <option value="W11">W11</option>
                                 <option value="W12">W12</option>
@@ -138,7 +136,7 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text">°C</div>
                                 </div>
-                                <input type="number" class="form-control" id="tmfh"
+                                <input type="number" class="form-control" id="tmfh" name="tmfh"
                                     placeholder="อุณหภูมิของอาหารที่ Foodhouse" value="25" required>
                             </div>
                         </div>
@@ -146,16 +144,16 @@
                         <div class="form">
                             <label class="require">เวลาที่เสิร์ฟอาหารถาดสุดท้าย</label>
                             <div class="row">
-                                <div class="col-10">
+                                <div class="col-11">
                                     <div class="input-group mb-2">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text"><i class="bi bi-clock"></i></div>
                                         </div>
-                                        <input type="text" class="form-control datetimepicker" id="finishDTM" required
-                                            readonly disabled>
+                                        <input type="text" class="form-control datetimepicker" id="finishDTM"
+                                            name="finishDTM" required readonly>
                                     </div>
                                 </div>
-                                <div class="col-2">
+                                <div class="col-1">
                                     <button type="button" class="btn btn-info mb-2" onclick="calFinishDTM()"><i
                                             class="bi bi-calculator"></i></button>
                                 </div>
@@ -167,18 +165,18 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text">°C</div>
                                 </div>
-                                <input type="number" class="form-control" id="tmwd"
+                                <input type="number" class="form-control" id="tmwd" name="tmwd"
                                     placeholder="อุณหภูมิของอาหารที่ Ward" value="25" required>
                             </div>
                         </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
-                    <button type="button" class="btn btn-primary" id="btnOnSave">บันทึกข้อมูล</button>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">ยกเลิก</button>
+                        <button type="submit" class="btn btn-primary" id="btnOnSave">บันทึกข้อมูล</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
 </body>
 
@@ -258,13 +256,51 @@
         });
     }
 
+    function onSavesuccess() {
+        Swal.fire({
+            title: "สำเร็จ",
+            text: "ดำเนินการบันทึกข้อมูลเรียบร้อยแล้ว",
+            icon: "success"
+        }).then(function (e) {
+            location.reload();
+        });
+    }
+
     $(document).ready(function () {
         initStartDTM();
 
         $('#btnOnSave').click(function (e) {
             e.preventDefault();
-            const data = new FormData($("#frmRecord"));
-            console.log(data);
+
+            var formData = new FormData(document.getElementById("frmRecord"));
+            var formEntriesArray = Array.from(formData.entries());
+
+            var isValid = true;
+
+            formEntriesArray.forEach(function (pair) {
+                var fieldName = pair[0];
+                var fieldValue = pair[1];
+
+                if (!fieldValue) {
+                    isValid = false;
+                    console.log(`Field ${fieldName} is empty.`);
+                    $(`[name=${fieldName}]`).css("border", "1px solid red");
+                } else {
+                    $(`[name=${fieldName}]`).css("border", ""); // Reset the border if not empty
+                }
+            });
+
+            if (!isValid) {
+                Swal.fire({
+                    title: "พบข้อผิดพลาด",
+                    text: "ข้อมูลที่กรอกไม่ครบถ้วน รบกวนตรวจสอบข้อมูลก่อนดำเนินการอีกครั้งค่ะ",
+                    icon: "error"
+                });
+            } else {
+                var formEntries = Object.fromEntries(formEntriesArray);
+                google.script.run.withSuccessHandler(onSavesuccess).InsertValue();
+                console.log(formEntries);
+            }
         });
     });
 

@@ -10,7 +10,7 @@ function loadUi() {
 }
 
 const doGet = (e) => {
-  Route.path('project-list', loadUi);
+  Route.path('foodhouse', loadUi);
   if (Route[e.parameters.v]) {
     return Route[e.parameters.v]();
   }

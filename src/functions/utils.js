@@ -14,7 +14,7 @@ const isEmpty = (text) => {
     return text === '' ? true : false;
 };
 
-const InsertValue = async(string) => {
+const InsertValue = async() => {
     Logger.log('[InsertValue()]: starting function.');
     const Progress = Tamotsu.Table.define({
         sheetName: 'Database',
@@ -23,7 +23,15 @@ const InsertValue = async(string) => {
     });
 
     Progress.create({
-        "":"",
+        "Transaction DTM": "1",
+        "Meat": "1",
+        "Location": "1",
+        "Delivery/Arrival DTM": "1",
+        "Finished DTM": "1",
+        "DTM Diff": "'",
+        "Food's Temperature At Foodhouse": "1",
+        "Food's Temperature At Ward": "1",
+        "Temperature Diff": "1"
 
     });
 
@@ -98,4 +106,4 @@ const render = (file, argsObject) => {
         );
 };
 
-export { setDataToStore, getDataFromRange, isEmpty, filterByValue, filterByValueLike, render };
+export { setDataToStore, getDataFromRange, isEmpty, filterByValue, filterByValueLike, render, InsertValue };
