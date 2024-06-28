@@ -1,5 +1,5 @@
 import { doPost, doGet } from './server/webapp';
-import { filterByValue, InsertValue, getScriptURL } from './functions/utils';
+import { filterByValue, InsertValue, getScriptURL, parseCustomDateTime } from './functions/utils';
 
 // eslint-disable-next-line no-global-assign
 Logger = BetterLog.useSpreadsheet(
@@ -12,3 +12,4 @@ global.doGet = doGet;
 global.filterByValue = filterByValue;
 global.InsertValue = InsertValue;
 global.getScriptURL = getScriptURL;
+global.parseCustomDateTime = parseCustomDateTime;

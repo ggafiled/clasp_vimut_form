@@ -76,8 +76,10 @@
                     เริ่มบันทึกข้อมูล
                 </button>
             </div>
-            <div class="row" style="overflow: scroll !important">
-                <table id="tabel1"></table>
+            <div class="row">
+                <div class="col-12">
+                    <table id="tabel1" class="display" style="width:100%"></table>
+                </div>
             </div>
         </div>
     </div>
@@ -142,7 +144,7 @@
                         <div class="form">
                             <label class="require">เวลาที่เสิร์ฟอาหารถาดสุดท้าย</label>
                             <div class="row">
-                                <div class="col-11">
+                                <div class="col-lg-11 col-sm-12">
                                     <div class="input-group mb-2">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text"><i class="bi bi-clock"></i></div>
@@ -151,8 +153,8 @@
                                             name="finishDTM" required readonly />
                                     </div>
                                 </div>
-                                <div class="col-1">
-                                    <button type="button" class="btn btn-info mb-2" onclick="calFinishDTM()">
+                                <div class="col-lg-1 col-sm-12">
+                                    <button type="button" class="btn btn-info mb-2 btn-block" onclick="calFinishDTM()">
                                         <i class="bi bi-calculator"></i>
                                     </button>
                                 </div>
@@ -176,6 +178,15 @@
                 </div>
             </div>
         </form>
+    </div>
+    <div class="footer text-center text-lg-start navbar-fixed-bottom mt-5"
+        style="background-color: #a90056 !important; color: #ffffff">
+        <!-- Copyright -->
+        <div class="text-center p-3">
+            © 2024 Copyright:
+            <a style="color: #ffffff !important; text-decoration: none;" href="https://foodhouse.co.th/">Foodhouse.com</a>
+        </div>
+        <!-- Copyright -->
     </div>
 </body>
 
@@ -300,6 +311,36 @@
             .getScriptURL();
     }
 
+    function format(d) {
+        // `d` is the original data object for the row
+        return '<table class="table">' +
+            '<tr>' +
+            '<th>Delivery/Arrival DTM :</th>' +
+            '<td>' + moment(d["Delivery/Arrival DTM"]).format('DD/MM/YYYY HH:mm') + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<th>Finished DTM :</th>' +
+            '<td>' + moment(d["Finished DTM"]).format('DD/MM/YYYY HH:mm') + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<th>DTM Diff :</th>' +
+            '<td>' + moment(d["DTM Diff"]).format('HH:mm:ss') + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<th>FH (°C) :</th>' +
+            '<td>' + d["Food's Temperature At Foodhouse"] + '°C' + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<th>FW (°C) :</th>' +
+            '<td>' + d["Food's Temperature At Ward"] + '°C' + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<th>Temperature Diff :</th>' +
+            '<td>' + d["Temperature Diff"] + '</td>' +
+            '</tr>' +
+            '</table>';
+    }
+
     $(document).ready(function () {
         initStartDTM();
 
@@ -331,7 +372,7 @@
                     text: 'ข้อมูลที่กรอกไม่ครบถ้วน รบกวนตรวจสอบข้อมูลก่อนดำเนินการอีกครั้งค่ะ',
                     icon: 'error',
                 });
-                $('#btnOnSave').removeAttr('disable');
+                $('#btnOnSave').attr('disabled', false);
             } else {
                 var formEntries = Object.fromEntries(formEntriesArray);
                 //onSavesuccess();
@@ -361,14 +402,20 @@
             dataSet = JSON.parse(DataPass);
 
             table = $('#tabel1').DataTable({
-                responsive: true,
+                responsive: false,
                 data: dataSet,
                 columns: [
+                    {
+                        "className": 'details-control',
+                        "orderable": false,
+                        "data": null,
+                        "defaultContent": ''
+                    },
                     {
                         title: 'วันที่ทำรายการ',
                         data: 'Transaction DTM',
                         render: function (data, type, row, meta) {
-                            return data === '' ? '-' : moment(data).format('MM-DD-YYYY HH:mm');
+                            return data === '' ? '-' : moment(data).format('DD/MM/YYYY HH:mm');
                         },
                     },
                     {
@@ -385,48 +432,20 @@
                             return data === '' ? '-' : data;
                         },
                     },
-                    {
-                        title: 'Delivery/Arrival DTM',
-                        data: 'Delivery/Arrival DTM',
-                        render: function (data, type, row, meta) {
-                            return data === '' ? '-' : moment(data).format('MM-DD-YYYY HH:mm');
-                        },
-                    },
-                    {
-                        title: 'Finished DTM',
-                        data: 'Finished DTM',
-                        render: function (data, type, row, meta) {
-                            return data === '' ? '-' : moment(data).format('MM-DD-YYYY HH:mm');
-                        },
-                    },
-                    {
-                        title: 'DTM Diff',
-                        data: 'DTM Diff',
-                        render: function (data, type, row, meta) {
-                            return data === '' ? '-' : moment(data).format('HH:mm');
-                        },
-                    },
-                    {
-                        title: 'FH (°C)',
-                        data: "Food's Temperature At Foodhouse",
-                        render: function (data, type, row, meta) {
-                            return data === '' ? '-' : data + ' °C';
-                        },
-                    },
-                    {
-                        title: 'FW (°C)',
-                        data: "Food's Temperature At Ward",
-                        render: function (data, type, row, meta) {
-                            return data === '' ? '-' : data + ' °C';
-                        },
-                    },
-                    {
-                        title: 'Temperature Diff',
-                        data: 'Temperature Diff',
-                        render: function (data, type, row, meta) {
-                            return data === '' ? '-' : data + ' °C';
-                        },
-                    },
+                    // {
+                    //     title: 'Delivery/Arrival DTM',
+                    //     data: 'Delivery/Arrival DTM',
+                    //     render: function (data, type, row, meta) {
+                    //         return data === '' ? '-' : moment(data).format('DD/MM/YYYY HH:mm');
+                    //     },
+                    // },
+                    // {
+                    //     title: 'Finished DTM',
+                    //     data: 'Finished DTM',
+                    //     render: function (data, type, row, meta) {
+                    //         return data === '' ? '-' : moment(data).format('DD/MM/YYYY HH:mm');
+                    //     },
+                    // }
                 ],
             });
 
@@ -436,6 +455,21 @@
         showLoading();
 
         google.script.run.withSuccessHandler(onSuccess).filterByValue();
+
+        $('#tabel1').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                // Open this row
+                row.child(format(row.data())).show();
+                tr.addClass('shown');
+            }
+        });
 
         setTimeout(() => {
             $('#warning').remove();

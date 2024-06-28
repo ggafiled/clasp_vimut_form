@@ -14,11 +14,41 @@ const isEmpty = (text) => {
     return text === '' ? true : false;
 };
 
-const InsertValue = async(model) => {
+const parseCustomDateTime = (dateTimeStr) => {
+    var parts = dateTimeStr.split(' ');
+    var dateParts = parts[0].split('/');
+    var timeParts = parts[1].split(':');
+
+    var day = parseInt(dateParts[0], 10);
+    var month = parseInt(dateParts[1], 10) - 1;
+    var year = parseInt(dateParts[2], 10);
+    var hours = parseInt(timeParts[0], 10);
+    var minutes = parseInt(timeParts[1], 10);
+
+    return new Date(year, month, day, hours, minutes);
+}
+
+const InsertValue = async (model) => {
     Logger.log('[InsertValue()]: starting function.' + JSON.stringify(model));
     model = JSON.parse(JSON.stringify(model));
 
     var diffTemp = parseInt(model.tmwd) - parseInt(model.tmfh);
+
+    var start = parseCustomDateTime(model.startDTM);
+    var end = parseCustomDateTime(model.finishDTM);
+    var diffInMilliseconds = end - start;
+
+    var diffInSeconds = Math.floor(diffInMilliseconds / 1000);
+    var hours = Math.floor(diffInSeconds / 3600);
+    var minutes = Math.floor((diffInSeconds % 3600) / 60);
+    var seconds = diffInSeconds % 60;
+
+    var formattedDiff =
+        String(hours).padStart(2, '0') + ':' +
+        String(minutes).padStart(2, '0') + ':' +
+        String(seconds).padStart(2, '0');
+
+    Logger.log('[InsertValue()]: formattedDiff.' + formattedDiff);
 
     const Progress = Tamotsu.Table.define({
         sheetName: 'Database',
@@ -27,14 +57,24 @@ const InsertValue = async(model) => {
     });
 
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Database');
-    var tmp_data = [model.finishDTM, model.meats, model.locations, model.startDTM, model.finishDTM, "10:00", model.tmfh, model.tmwd, diffTemp]
+    var tmp_data = [
+        model.finishDTM,
+        model.meats,
+        model.locations,
+        model.startDTM,
+        model.finishDTM,
+        formattedDiff,
+        model.tmfh,
+        model.tmwd,
+        diffTemp,
+    ];
     sheet.appendRow(tmp_data);
 
     var likeCondoname = await Progress.all();
     return JSON.stringify(likeCondoname);
 };
 
-const filterByValueLike = async(string) => {
+const filterByValueLike = async (string) => {
     Logger.log('[filterByValueLike()]: starting function.');
     const Progress = Tamotsu.Table.define({
         sheetName: 'Database',
@@ -47,11 +87,11 @@ const filterByValueLike = async(string) => {
     likeCondoname = await likeCondoname.filter((elem) => {
         if (
             String(elem['Location'])
-            .trim()
-            .toLocaleLowerCase()
-            .match(
-                new RegExp('.*' + string.trim().toLocaleLowerCase().split(/\s+/).join('|') + '.*\\b', 'g')
-            )
+                .trim()
+                .toLocaleLowerCase()
+                .match(
+                    new RegExp('.*' + string.trim().toLocaleLowerCase().split(/\s+/).join('|') + '.*\\b', 'g')
+                )
         ) {
             return true;
         }
@@ -69,8 +109,8 @@ const filterByValue = (string) => {
     });
     if (string) {
         var finalarray = Progress.where((row) => {
-                return String(row['Transaction DTM']).trim() !== '';
-            })
+            return String(row['Transaction DTM']).trim() !== '';
+        })
             .all()
             .filter((o) =>
                 Object.keys(o).some((k) => String(o[k]).toLowerCase().includes(string.toLowerCase()))
@@ -89,21 +129,29 @@ const render = (file, argsObject) => {
     var tmp = HtmlService.createTemplateFromFile(file);
     if (argsObject) {
         var keys = Object.keys(argsObject);
-        keys.forEach(function(key) {
+        keys.forEach(function (key) {
             tmp[key] = argsObject[key];
         });
     }
     return tmp
         .evaluate()
         .setTitle('แบบบันทึกเวลาบริการและอุณหภูมิการส่งอาหารผู้ป่วยประจำวัน')
-        .setFaviconUrl(
-            'https://foodhouse.co.th/wp-content/uploads/2018/12/cropped-image09-180x180.png'
-        )
+        .setFaviconUrl('https://foodhouse.co.th/wp-content/uploads/2018/12/cropped-image09-180x180.png')
         .addMetaTag('viewport', 'width=device-width, initial-scale=1.0');
 };
 
 const getScriptURL = () => {
     return ScriptApp.getService().getUrl();
-}
+};
 
-export { setDataToStore, getDataFromRange, isEmpty, filterByValue, filterByValueLike, render, InsertValue, getScriptURL };
+export {
+    setDataToStore,
+    getDataFromRange,
+    isEmpty,
+    filterByValue,
+    filterByValueLike,
+    render,
+    InsertValue,
+    getScriptURL,
+    parseCustomDateTime
+};
